@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.ProseMirror:focus {
+
+    outline: none;
+
+}
+
+/* Custom bullet points */
+.ProseMirror ul {
+    list-style-type: none; /* Remove default bullets */
+    padding-left: 1rem; /* Adjust indentation */
+}
+
+.ProseMirror ul li {
+    position: relative;
+    padding-left: 1.5rem; /* Space for custom bullet */
+}
+  
+.ProseMirror ul li::before {
+    content: "•"; /* Custom bullet character */
+    position: absolute;
+    left: 0;
+    color: #10b981; /* Bullet color (Tailwind's blue-500) */
+    font-size: 1.25rem; /* Bullet size */
+    line-height: 1.5; /* Align bullet with text */
+}
+  
+  /* Custom ordered list numbers */
+.ProseMirror ol {
+    list-style-type: none;
+    padding-left: 1rem;
+    counter-reset: my-counter;
+  }
+  
+.ProseMirror ol li {
+    position: relative;
+    padding-left: 1.5rem;
+    counter-increment: my-counter;
+}
+
+.ProseMirror ol li::before {
+    content: counter(my-counter) ".";
+    position: absolute;
+    left: 0;
+    color: #10b981;
+    font-weight: bold;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+}
+
+.tiptap p.is-empty::before {
+    color: #adb5bd;
+    content: attr(data-placeholder);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+  
+  
