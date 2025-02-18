@@ -2,14 +2,27 @@ import React, { useEffect, useRef, useState } from 'react';
 import {useEditor, EditorContent} from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
+import Underline from '@tiptap/extension-underline';
+import Highlight from '@tiptap/extension-highlight';
+import TextAlign from '@tiptap/extension-text-align'
+import Code from '@tiptap/extension-code';
 import Toolbar from './Toolbar';
+
 
 const ScreenView = ({ currentScreen }) => {
 
   const [title, setTitle] = useState('');
   const editor = useEditor({
     extensions: [
+      Underline,
+      Code,
       StarterKit,
+      Highlight,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'], // Apply alignment to headings and paragraphs
+        alignments: ['left', 'center', 'right', 'justify'], // Supported alignments
+        defaultAlignment: 'left', // Default alignment
+      }),
       Placeholder.configure({
         placeholder: 'Write some words... '
       })
@@ -35,7 +48,7 @@ const ScreenView = ({ currentScreen }) => {
         <div className='flex flex-col items-start justify-start w-full gap-3 h-fit'>
           <input
             placeholder='Enter a title'
-            className='w-full text-4xl font-extrabold bg-transparent outline-none'
+            className='w-full text-3xl font-extrabold bg-transparent outline-none'
             value={title}
             onChange={handleTitleChange}
           />
@@ -46,6 +59,12 @@ const ScreenView = ({ currentScreen }) => {
 
        <div className='w-full h-full'>
           <EditorContent
+            editor={editor}
+          />
+       </div>
+
+       <div className='fixed bottom-5 right-5'>
+          <Toolbar
             editor={editor}
           />
        </div>

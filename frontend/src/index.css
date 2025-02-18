@@ -52,7 +52,7 @@
 }
 
 .tiptap p.is-editor-empty:first-child::before {
-    color: #adb5bd;
+    color: #707479;
     content: attr(data-placeholder);
     float: left;
     height: 0;
@@ -60,11 +60,53 @@
 }
 
 .tiptap p.is-empty::before {
-    color: #adb5bd;
+    color: #707479;
     content: attr(data-placeholder);
     float: left;
     height: 0;
     pointer-events: none;
+}
+
+/* Heading 1 */
+.ProseMirror h1 {
+    font-size: 1.5rem; 
+    font-weight: 800; /* Extra bold */
+}
+  
+  /* Heading 2 */
+.ProseMirror h2 {
+    font-size: 1.24rem;
+    font-weight: 700; /* Bold */
+}
+  
+  /* Heading 3 */
+.ProseMirror h3 {
+    font-size: 1rem; 
+    font-weight: 600; /* Semi-bold */
+
+}
+  
+/* Text alignment styles for Tiptap editor */
+.ProseMirror .text-left {
+    text-align: left;
+}
+  
+.ProseMirror .text-center {
+    text-align: center;
+}
+
+.ProseMirror .text-right {
+    text-align: right;
+}
+
+.ProseMirror .text-justify {
+    text-align: justify;
+}
+
+.ProseMirror mark {
+    background-color: #10b981;
+    color: white;
+    border-radius: 0.4rem;
+    box-decoration-break: clone;
+    padding: 0.1rem 0.3rem;
   }
-  
-  

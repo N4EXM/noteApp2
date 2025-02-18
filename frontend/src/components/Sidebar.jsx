@@ -4,7 +4,7 @@ import Card from './Card'
 const Sidebar = ({handleCurrentScreen}) => {
     return (
 
-        <div className='flex flex-col items-start justify-start h-full gap-10 p-5 border-r-2 w-[36rem] bg-neutral-100 dark:bg-zinc-800 dark:border-zinc-700 border-neutral-200'>
+        <div className='flex flex-col items-start justify-start h-full gap-10 p-5 border-r-2 w-[40rem] bg-neutral-100 dark:bg-zinc-800 dark:border-zinc-700 border-neutral-200'>
         
             <div className='flex flex-row items-center justify-start gap-3 pl-1'>
                 <box-icon color='#10b981' size='md' name='layer'></box-icon>
