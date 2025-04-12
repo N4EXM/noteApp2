@@ -1,5 +1,6 @@
 import React from 'react'
 import trashIcon from '../assets/trashIcon.png'
+import { htmlToText } from 'html-to-text' 
 
 const card = ({handleDeleteCard, content, date}) => {
 
@@ -12,12 +13,16 @@ const card = ({handleDeleteCard, content, date}) => {
         }
     }
 
+    const plainText = htmlToText(content, {
+        wordwrap: false,
+    });
+
   return (
     <div className='flex flex-col items-start justify-between w-full gap-4 p-4 transition duration-200 ease-in rounded-md min-h-40 max-h-52 bg-secondBackground hover:bg-primary active:bg-thirdly active:duration-100 text-text'>
 
         {/* title and description */}
         <div className='flex flex-col gap-1'>
-            <p className='text-sm'>{truncateText(content, 190)}</p>
+            <p className='text-sm'>{truncateText(plainText, 190)}</p>
         </div>
 
         {/* date and delete */}
