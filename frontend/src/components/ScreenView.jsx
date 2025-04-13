@@ -10,35 +10,49 @@ import Code from '@tiptap/extension-code';
 import { listItem } from '@tiptap/pm/schema-list';
 import Image from '@tiptap/extension-image'
 
-const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCard, content}) => {
+const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCard,currentNote,  getFormattedDate, handleUpdateCard}) => {
 
-    const editor = useEditor({
-      extensions: [
-        Underline,
-        listItem,
-        Code,
-        Image,
-        StarterKit,
-        Highlight,
-        TextAlign.configure({
-          types: ['heading', 'paragraph'], // Apply alignment to headings and paragraphs
-          alignments: ['left', 'center', 'right', 'justify'], // Supported alignments
-          defaultAlignment: 'left', // Default alignment
-        }),
-        Placeholder.configure({
-          placeholder: 'Start your note... '
-        })
-      ],
-      content: ""
-    })
+  const editor = useEditor({
+    extensions: [
+      Underline,
+      listItem,
+      Code,
+      Image,
+      StarterKit,
+      Highlight,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'], // Apply alignment to headings and paragraphs
+        alignments: ['left', 'center', 'right', 'justify'], // Supported alignments
+        defaultAlignment: 'left', // Default alignment
+      }),
+      Placeholder.configure({
+        placeholder: 'Start your note... '
+      }) 
+    ],
+    content: currentScreenView === 2 ? currentNote.content : "" // Start empty for new notes
+  });
 
-    const handleSaveNote = () => {
-      if (editor) {
-        const content = editor.getHTML(); // Gets the current HTML content
-        createNewCard(currentFolderId, content);
-      }
-    };
-  
+  // Update editor content when currentNote changes
+  useEffect(() => {
+    if (editor && currentNote?.content) {
+      editor.commands.setContent(currentNote.content);
+    }
+  }, [currentNote, editor]);
+
+  const handleSaveNote = () => {
+    if (editor) {
+        const content = editor.getHTML();
+        if (currentScreenView === 1) {
+            // Create new note
+            createNewCard(currentFolderId, content);
+        } else if (currentScreenView === 2) {
+            // Update existing note
+            // You'll need to implement handleUpdateCard in App.js
+            handleUpdateCard(currentNote.folderId, currentNote.noteId, content);
+        }
+    }
+  };
+    
     if (currentScreenView === 0) { // nothing has been selected
         return (
             <div className={`flex items-center justify-center w-full h-screen text-xl font-bold text-zinc-600 ${helpClick ? 'blur-lg' : ''}`}>
@@ -47,19 +61,18 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
         )
     }
     else if (currentScreenView === 1) { // loads an empty note page
-        console.log("currentFolderID: " + currentFolderId)
         return (
             <div className={`relative overflow-x-hidden flex flex-col justify-between w-full h-screen ${helpClick ? 'blur-lg' : ''}`}>
                 <div  className='relative w-full h-full p-10 overflow-y-scroll'>
                   <EditorContent
-                    editor={editor}
+                    editor={editor} 
                   />     
                   <button onClick={() => handleSaveNote()} className='fixed p-2 transition duration-200 rounded-full bottom-20 right-4 bg-primary hover:bg-secondary active:bg-thirdly'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor"}}><path d="m10 15.586-3.293-3.293-1.414 1.414L10 18.414l9.707-9.707-1.414-1.414z"></path></svg>
                   </button>
                 </div>
                 <div className='flex flex-row items-center justify-between p-2 border-t-2 border-border bg-secondBackground'>
-                  <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>22/05/06</p>
+                  <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>{getFormattedDate()}</p>
                   <Toolbar
                     editor={editor}
                   />
@@ -68,7 +81,28 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
             </div>
         )
     }
-
+    else if (currentScreenView === 2) { // loads a note
+      console.log("screenView: " + 2)
+      return (
+          <div className={`relative overflow-x-hidden flex flex-col justify-between w-full h-screen ${helpClick ? 'blur-lg' : ''}`}>
+              <div  className='relative w-full h-full p-10 overflow-y-scroll'>
+                <EditorContent
+                  editor={editor} 
+                />     
+                <button onClick={() => handleUpdateCard(currentNote.folderId, currentNote.noteId, content)} className='fixed p-2 transition duration-200 rounded-full bottom-20 right-4 bg-primary hover:bg-secondary active:bg-thirdly'>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor"}}><path d="m10 15.586-3.293-3.293-1.414 1.414L10 18.414l9.707-9.707-1.414-1.414z"></path></svg>
+                </button>
+              </div>
+              <div className='flex flex-row items-center justify-between p-2 border-t-2 border-border bg-secondBackground'>
+                <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>{getFormattedDate()}</p>
+                <Toolbar
+                  editor={editor}
+                />
+              </div>
+              
+          </div>
+      )
+    }
 }
 
 export default ScreenView

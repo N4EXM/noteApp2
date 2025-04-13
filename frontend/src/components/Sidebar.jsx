@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import logo from '../assets/logo.png'
 import Folder from '../components/Folder'
 
-const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handleHelpClick, helpClick, folders, handleAddFolder, handleFolderAddClick}) => {
+const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handleHelpClick, helpClick, folders, handleAddFolder, handleFolderAddClick, handleNoteClick}) => {
 
     const [isNewFolderActive, setIsNewFolderActive] = useState(false) // checks if the user wants to add a new folder
     const bottomRef = useRef(null) // this will mark the bottom
@@ -66,6 +66,7 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
                             handleDeleteFolder={() => handleDeleteFolder(folder.folderId)}
                             handleDeleteCard={handleDeleteCard} 
                             handleFolderAddClick={handleFolderAddClick}
+                            handleNoteClick={handleNoteClick}
                         />
                     ))
                     :
@@ -103,7 +104,7 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
             {/* nav buttons */}
             <div className='flex flex-row items-center justify-between w-full'>
                 <button onClick={() => handleHelpClick()} className='flex p-2 transition duration-200 rounded-full bg-primary hover:bg-secondary active:bg-thirdly'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "white",transform: '',msFilter:''}}><path d="M12 4C9.243 4 7 6.243 7 9h2c0-1.654 1.346-3 3-3s3 1.346 3 3c0 1.069-.454 1.465-1.481 2.255-.382.294-.813.626-1.226 1.038C10.981 13.604 10.995 14.897 11 15v2h2v-2.009c0-.024.023-.601.707-1.284.32-.32.682-.598 1.031-.867C15.798 12.024 17 11.1 17 9c0-2.757-2.243-5-5-5zm-1 14h2v2h-2z"></path></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor",transform: '',msFilter:''}}><path d="M21 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2zm-8 2h2v2h-2V7zm0 4h2v2h-2v-2zM9 7h2v2H9V7zm0 4h2v2H9v-2zM5 7h2v2H5V7zm0 4h2v2H5v-2zm12 6H7v-2h10v2zm2-4h-2v-2h2v2zm0-4h-2V7h2v2z"></path></svg>
                 </button>
                 <button onClick={() => addNewFolder()} className='flex p-2 transition duration-200 rounded-full bg-primary hover:bg-secondary active:bg-thirdly'>
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor",transform: '',msFilter:''}}><path d="M20 5h-9.586L8.707 3.293A.997.997 0 0 0 8 3H4c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2h16c1.103 0 2-.897 2-2V7c0-1.103-.897-2-2-2zm-4 9h-3v3h-2v-3H8v-2h3V9h2v3h3v2z"></path></svg>

@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import Card from './Card'
 
-const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, handleScreenView, handleFolderAddClick}) => {
+const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, handleScreenView, handleFolderAddClick, handleNoteClick}) => {
 
     const [isHideFolder, setIsHideFolder] = useState(true)
+    const prevNotesLengthRef = useRef(notes.length); // Track previous length
 
     const handleHideFolder = () => {
         setIsHideFolder(!isHideFolder)
+        console.log("it is being clicked " + isHideFolder)
     }
 
     const truncateText = (str, maxLength) => {
@@ -17,6 +19,13 @@ const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, h
             return str;
         }
     }
+
+    useEffect(() => { // checks if a new note has been added
+        if (notes.length > prevNotesLengthRef.current) {
+            // console.log("New note added")
+            setIsHideFolder(false)
+        }
+    }, [notes.length])
 
   return (
 
@@ -41,13 +50,14 @@ const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, h
                 </div>
             }
         </div>
-        <div className={`${isHideFolder ?  'hidden': 'flex'} flex-col gap-4`}>
+        <div className={`${isHideFolder || notes.length < 1 ?  'hidden': 'flex'} flex-col gap-4`}>
             {notes.map((note) => (
                 <Card
                     key={note.noteId}
                     content={note.content}
                     date={note.date}
                     handleDeleteCard={() => handleDeleteCard(folderId,note.noteId)}
+                    handleNoteClick={() => handleNoteClick(folderId, note.noteId, note.content, note.date)}
                 />
             ))}
             <div className='flex items-center justify-between w-full'>

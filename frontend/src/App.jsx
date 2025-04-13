@@ -8,7 +8,8 @@ function App() {
   const [helpClick, setHelpClick] = useState(false)
   const [currentScreenView, setCurrentScreenView] = useState(0) // 0: no note selected, 1: new note 2: selected note
   const [currentFolderId, setCurrentFolderId] = useState(0)
-  const [content, setContent] = useState("")
+  const [currentNote, setCurrentNote] = useState({})
+  
 
   const getFormattedDate = () => {
     const date = new Date();
@@ -63,6 +64,7 @@ function App() {
 
   const handleDeleteFolder = (folderId) => {
     setFolders(prevFolders => prevFolders.filter(folder => folder.folderId !== folderId));
+    setCurrentScreenView(0)
   }
 
   const getLastNoteId = (folders) => {
@@ -81,32 +83,58 @@ function App() {
   };
 
   const createNewCard = (folderId, content) => {
-
-    const newCard = {
-
-      noteId: getLastNoteId(folders) + 1,
-      content: content,
-      date: getFormattedDate()
-      
-    }
+    const newNoteId = getLastNoteId(folders) + 1;
+    const newNote = {
+        noteId: newNoteId,
+        content: content,
+        date: getFormattedDate()
+    };
 
     setFolders(prevFolders => 
-      prevFolders.map(folder => 
-          folder.folderId === folderId
-              ? {
-                  ...folder,
-                  topicNotes: [...folder.topicNotes, newCard]
-              }
-              : folder
-      )
+        prevFolders.map(folder => 
+            folder.folderId === folderId
+                ? {
+                    ...folder,
+                    topicNotes: [...folder.topicNotes, newNote]
+                }
+                : folder
+        )
     );
 
-  }
+    // Set the new note as current and switch to edit mode
+    setCurrentNote({
+        folderId: folderId,
+        noteId: newNoteId,
+        content: content,
+        date: newNote.date
+    });
+    setCurrentScreenView(2);
+  };
 
   const handleFolderAddClick = (folderId) => { // sends the folder Id to the screenView page
     setCurrentFolderId(folderId)
     setCurrentScreenView(1)
   }
+
+  const handleUpdateCard = (folderId, noteId, newContent) => {
+    setFolders(prevFolders => 
+        prevFolders.map(folder => {
+            if (folder.folderId === folderId) {
+                return {
+                    ...folder,
+                    topicNotes: folder.topicNotes.map(note => 
+                        note.noteId === noteId 
+                            ? {...note, content: newContent} 
+                            : note
+                    )
+                };
+            }
+            return folder;
+        })
+    );
+    // Update current note
+    setCurrentNote(prev => ({...prev, content: newContent}));
+  };
 
   const [folders, setFolders] = useState([ // this will contain all the data for the notes
 
@@ -178,6 +206,19 @@ function App() {
     // },
 
   ])
+
+  const handleNoteClick = (folderId, noteId, content, date) => {
+    const currentNote = {
+      folderId: folderId,
+      noteId: noteId,
+      content: content,
+      date: date
+    }
+
+    setCurrentNote(currentNote)
+
+    setCurrentScreenView(2)
+  }
 
   return (
     <>
@@ -268,14 +309,17 @@ function App() {
           handleHelpClick={handleHelpClick}
           handleAddFolder={handleAddFolder}
           createNewCard={createNewCard}
+          handleNoteClick={handleNoteClick}
         />
 
         <ScreenView
+          handleUpdateCard={handleUpdateCard}
+          getFormattedDate={getFormattedDate}
           currentFolderId={currentFolderId}
           helpClick={helpClick}
           currentScreenView={currentScreenView}
           createNewCard={createNewCard}
-          content={content}
+          currentNote={currentNote}
         />
 
       </div>
