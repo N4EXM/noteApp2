@@ -8,8 +8,7 @@ function App() {
   const [helpClick, setHelpClick] = useState(false)
   const [currentScreenView, setCurrentScreenView] = useState(0) // 0: no note selected, 1: new note 2: selected note
   const [currentFolderId, setCurrentFolderId] = useState(0)
-  const [currentNote, setCurrentNote] = useState({})
-  
+  const [currentNote, setCurrentNote] = useState({})  
 
   const getFormattedDate = () => {
     const date = new Date();
@@ -25,6 +24,7 @@ function App() {
   // changes the current screen e.g 1: empty editor
   const handleScreenView = (index) => {
     setCurrentScreenView(index)
+    console.log("screenView: " + currentScreenView)
   }
 
   const handleHelpClick = () => {
@@ -114,6 +114,8 @@ function App() {
   const handleFolderAddClick = (folderId) => { // sends the folder Id to the screenView page
     setCurrentFolderId(folderId)
     setCurrentScreenView(1)
+    console.log("screenView 1")
+    console.log("folderId: " + folderId)
   }
 
   const handleUpdateCard = (folderId, noteId, newContent) => {
@@ -138,72 +140,81 @@ function App() {
 
   const [folders, setFolders] = useState([ // this will contain all the data for the notes
 
-    // {
-    //   folderId: 0,
-    //   topic: "Science",
-    //   topicNotes: [
-    //     {
-    //       noteId: 0,
-    //       content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
-    //       date: "12/12/14"
-    //     },
-    //     {
-    //       noteId: 1,
-    //       content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
-    //       date: "25/10/18"
-    //     },
-    //     {
-    //       noteId: 2,
-    //       content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
-    //       date: "23/06/10"
-    //     },
+//     {
+//       folderId: 0,
+//       topic: "Science",
+//       topicNotes: [
+//         {
+//           noteId: 0,
+//           content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
+//           date: "12/12/14"
+//         },
+//         {
+//           noteId: 1,
+//           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
+//           date: "25/10/18"
+//         },
+//         {
+//           noteId: 2,
+//           content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
+//           date: "23/06/10"
+//         },
 
-    //   ]
-    // },
-    // {
-    //   folderId: 1,
-    //   topic: "History",
-    //   topicNotes: [
-    //     {
-    //       noteId: 0,
-    //       content: "The Great Pyramid of Giza, the largest of the three pyramids in the Giza complex, stands as a testament to ancient Egyptian engineering. Built as a tomb for Pharaoh Khufu, it was originally covered in smooth white limestone and reached a height of 146.6 meters. For over 3,800 years, it remained the tallest man-made structure in the world, showcasing the precision and skill of its builders.",
-    //       date: "12/12/14"
-    //     },
-    //     {
-    //       noteId: 1,
-    //       content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
-    //       date: "25/10/18"
-    //     },
-    //     {
-    //       noteId: 2,
-    //       content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
-    //       date: "23/06/10"
-    //     },
+//       ]
+//     },
+//     {
+//       folderId: 1,
+//       topic: "History",
+//       topicNotes: [
+//         {
+//           noteId: 0,
+//           content: "The Great Pyramid of Giza, the largest of the three pyramids in the Giza complex, stands as a testament to ancient Egyptian engineering. Built as a tomb for Pharaoh Khufu, it was originally covered in smooth white limestone and reached a height of 146.6 meters. For over 3,800 years, it remained the tallest man-made structure in the world, showcasing the precision and skill of its builders.",
+//           date: "12/12/14"
+//         },
+//         {
+//           noteId: 1,
+//           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
+//           date: "25/10/18"
+//         },
+//         {
+//           noteId: 2,
+//           content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
+//           date: "23/06/10"
+//         },
 
-    //   ]
-    // },
-    // {
-    //   folderId: 2,
-    //   topic: "Science",
-    //   topicNotes: [
-    //     {
-    //       noteId: 0,
-    //       content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
-    //       date: "12/12/14"
-    //     },
-    //     {
-    //       noteId: 1,
-    //       content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
-    //       date: "25/10/18"
-    //     },
-    //     {
-    //       noteId: 2,
-    //       content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
-    //       date: "23/06/10"
-    //     },
+//       ]
+//     },
+//     {
+//       folderId: 2,
+//       topic: "Science",
+//       topicNotes: [
+//         {
+//           noteId: 0,
+//           content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
+//           date: "12/12/14"
+//         },
+//         {
+//           noteId: 1,
+//           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
+//           date: "25/10/18"
+//         },
+//         {
+//           noteId: 2,
+//           content: `<h2>Science Notes</h2>
+// <p>Key concepts from today's lecture:</p>
+// <ul>
+//   <li><strong>Mitochondria</strong> are the powerhouse of the cell</li>
+//   <li>Photosynthesis formula: <code>6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂</code></li>
+// </ul>
+// <p style="text-align: center">Exam next Tuesday!</p>
+// <blockquote>
+//   <p>Remember: Energy cannot be created or destroyed</p>
+// </blockquote>`,
+//           date: "23/06/10"
+//         },
 
-    //   ]
-    // },
+//       ]
+//     },
 
   ])
 
@@ -218,6 +229,7 @@ function App() {
     setCurrentNote(currentNote)
 
     setCurrentScreenView(2)
+    console.log(folders)
   }
 
   return (
@@ -302,7 +314,6 @@ function App() {
         <Sidebar 
           handleFolderAddClick={handleFolderAddClick}
           helpClick={helpClick}
-          handleScreenView={handleScreenView}
           handleDeleteFolder={handleDeleteFolder}
           handleDeleteCard={handleDeleteCard}
           folders={folders}

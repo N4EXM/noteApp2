@@ -62,13 +62,13 @@
   font-weight: bold;
 }
 
-.tiptap p.is-editor-empty:first-child::before {
+/* .tiptap p.is-editor-empty:first-child::before {
   color: #707479;
   content: attr(data-placeholder);
   float: left;
   height: 0;
   pointer-events: none;
-}
+} */
 
 .tiptap p.is-empty::before {
   color: #707479;
@@ -120,4 +120,12 @@
   border-radius: 0.4rem;
   box-decoration-break: clone;
   padding: 0.1rem 0.3rem;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: #adb5bd;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

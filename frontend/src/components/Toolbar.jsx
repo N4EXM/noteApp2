@@ -50,7 +50,7 @@ const Toolbar = ({editor}) => {
       </button>
 
       <button 
-        onClick={() => editor.chain().focus().toggleCode().run()}
+        onClick={() => editor.chain().focus().toggleCodeBlock().run()}
         className={`${editor.isActive("code") ? 'text-emerald-500' : '' } outline-none flex p-2 hover:text-emerald-500 hover:scale-125 active:scale-90 transition duration-300 `}>
         <svg 
           xmlns="http://www.w3.org/2000/svg" 

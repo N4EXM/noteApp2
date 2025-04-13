@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Card from './Card'
 
-const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, handleScreenView, handleFolderAddClick, handleNoteClick}) => {
+const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, handleFolderAddClick, handleNoteClick}) => {
 
     const [isHideFolder, setIsHideFolder] = useState(true)
     const prevNotesLengthRef = useRef(notes.length); // Track previous length
@@ -44,7 +44,7 @@ const Folder = ({notes, topic, handleDeleteFolder, handleDeleteCard, folderId, h
                     <button onClick={handleDeleteFolder} className='flex w-auto h-auto transition duration-200 rounded-md hover:scale-125 active:scale-75'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style={{fill: "white",transform: '',msFilter:''}}><path d="M5 20a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8h2V6h-4V4a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2H3v2h2zM9 4h6v2H9zM8 8h9v12H7V8z"></path><path d="M9 10h2v8H9zm4 0h2v8h-2z"></path></svg>
                     </button>
-                    <button onClick={() => handleScreenView(1)} className='flex transition duration-75 hover:duration-200 hover:scale-125 active:scale-75'>
+                    <button onClick={() => handleFolderAddClick(folderId)} className='flex transition duration-75 hover:duration-200 hover:scale-125 active:scale-75'>
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" style={{fill: "white",transform: '',msFilter:''}}><path d="M19 11h-6V5h-2v6H5v2h6v6h2v-6h6z"></path></svg>
                     </button> 
                 </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {useEditor, EditorContent} from '@tiptap/react'
 import Toolbar from './Toolbar';
 import StarterKit from '@tiptap/starter-kit'
@@ -7,17 +7,18 @@ import Underline from '@tiptap/extension-underline';
 import Highlight from '@tiptap/extension-highlight';
 import TextAlign from '@tiptap/extension-text-align'
 import Code from '@tiptap/extension-code';
+import CodeBlock from '@tiptap/extension-code-block'
 import { listItem } from '@tiptap/pm/schema-list';
-import Image from '@tiptap/extension-image'
 
 const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCard,currentNote,  getFormattedDate, handleUpdateCard}) => {
+
+  const [content, setContent] = useState("")
 
   const editor = useEditor({
     extensions: [
       Underline,
       listItem,
       Code,
-      Image,
       StarterKit,
       Highlight,
       TextAlign.configure({
@@ -26,10 +27,17 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
         defaultAlignment: 'left', // Default alignment
       }),
       Placeholder.configure({
-        placeholder: 'Start your note... '
-      }) 
+        placeholder: 'Start your note... ',
+        emptyEditorClass: 'is-editor-empty'
+      }),
+      CodeBlock.configure({
+        // Optional configuration
+        languageClassPrefix: 'language-', // CSS class prefix for syntax highlighting
+        exitOnTripleEnter: true,          // Exit code block on triple Enter
+        exitOnArrowDown: true             // Exit code block on ArrowDown at end
+      }),
     ],
-    content: currentScreenView === 2 ? currentNote.content : "" // Start empty for new notes
+    content: content// Start empty for new notes
   });
 
   // Update editor content when currentNote changes
@@ -38,6 +46,19 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
       editor.commands.setContent(currentNote.content);
     }
   }, [currentNote, editor]);
+
+  // Handle content changes when screen view or note changes
+  useEffect(() => {
+    if (!editor) return;
+
+    if (currentScreenView === 1) {
+      // New note - clear content
+      editor.commands.clearContent();
+    } else if (currentScreenView === 2 && currentNote?.content) {
+      // Existing note - set content
+      editor.commands.setContent(currentNote.content);
+    }
+  }, [currentScreenView, currentNote, editor]);
 
   const handleSaveNote = () => {
     if (editor) {
@@ -61,28 +82,27 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
         )
     }
     else if (currentScreenView === 1) { // loads an empty note page
-        return (
-            <div className={`relative overflow-x-hidden flex flex-col justify-between w-full h-screen ${helpClick ? 'blur-lg' : ''}`}>
-                <div  className='relative w-full h-full p-10 overflow-y-scroll'>
-                  <EditorContent
-                    editor={editor} 
-                  />     
-                  <button onClick={() => handleSaveNote()} className='fixed p-2 transition duration-200 rounded-full bottom-20 right-4 bg-primary hover:bg-secondary active:bg-thirdly'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor"}}><path d="m10 15.586-3.293-3.293-1.414 1.414L10 18.414l9.707-9.707-1.414-1.414z"></path></svg>
-                  </button>
-                </div>
-                <div className='flex flex-row items-center justify-between p-2 border-t-2 border-border bg-secondBackground'>
-                  <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>{getFormattedDate()}</p>
-                  <Toolbar
-                    editor={editor}
-                  />
-                </div>
-                
-            </div>
+      return (
+          <div className={`relative overflow-x-hidden flex flex-col justify-between w-full h-screen ${helpClick ? 'blur-lg' : ''}`}>
+              <div  className='relative w-full h-full p-10 overflow-y-scroll'>
+                <EditorContent
+                  editor={editor} 
+                />     
+                <button onClick={() => handleSaveNote()} className='fixed p-2 transition duration-200 rounded-full bottom-20 right-4 bg-primary hover:bg-secondary active:bg-thirdly'>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor"}}><path d="m10 15.586-3.293-3.293-1.414 1.414L10 18.414l9.707-9.707-1.414-1.414z"></path></svg> 
+                </button>
+              </div>
+              <div className='flex flex-row items-center justify-between p-2 border-t-2 border-border bg-secondBackground'>
+                <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>{getFormattedDate()}</p>
+                <Toolbar
+                  editor={editor}
+                />
+              </div>
+              
+          </div>
         )
     }
     else if (currentScreenView === 2) { // loads a note
-      console.log("screenView: " + 2)
       return (
           <div className={`relative overflow-x-hidden flex flex-col justify-between w-full h-screen ${helpClick ? 'blur-lg' : ''}`}>
               <div  className='relative w-full h-full p-10 overflow-y-scroll'>
@@ -94,7 +114,7 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
                 </button>
               </div>
               <div className='flex flex-row items-center justify-between p-2 border-t-2 border-border bg-secondBackground'>
-                <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>{getFormattedDate()}</p>
+                <p className='w-full pl-4 text-sm'><span className='pr-2 text-base font-semibold'>Date:</span>{currentNote.date}</p>
                 <Toolbar
                   editor={editor}
                 />
