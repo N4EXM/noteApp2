@@ -9,6 +9,12 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
     const bottomRef = useRef(null) // this will mark the bottom
     const newFolderInputRef = useRef(null) // ref for the folder input
     const [topicInput, setTopicInput] = useState("") 
+    const [searchInput, setSearchInput] = useState("")
+    const [filteredFolders, setFilteredFolders] = useState([]);
+
+    const handleSearchChange = (e) => {
+        setSearchInput(e.target.value);
+    };
 
     const handleTopicInputChange = (e) => {
         setTopicInput(e.target.value)
@@ -34,6 +40,18 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
         }
     }, [isNewFolderActive]);
 
+    // Update search results whenever searchInput or folders change
+    useEffect(() => {
+        if (searchInput.trim() === "") {
+            setFilteredFolders(folders);
+        } else {
+            const results = folders.filter(folder =>
+                folder.topic.toLowerCase().includes(searchInput.toLowerCase())
+            );
+            setFilteredFolders(results);
+        }
+    }, [searchInput, folders]);
+
     return (
         <div className={`flex flex-col items-start justify-start gap-10 p-5 min-w-[26rem] max-w-[26rem] h-full bg-secondBackground border-r-2 border-border ${helpClick ? 'blur-lg' : ''}`}>
             
@@ -45,9 +63,9 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
 
             {/* search field */}
             <div className='flex flex-row items-center justify-start w-full gap-4'>
-                <input placeholder="Search title" type="text" className='w-full p-2 pl-5 pr-5 rounded-full outline-none bg-background'/>
-                <button className='flex p-2 transition duration-200 rounded-full bg-primary hover:bg-secondary active:bg-thirdly'>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" style={{fill: 'white',transform:'', msFilter:''}}><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z"></path></svg>   
+                <input value={searchInput} onChange={handleSearchChange} placeholder="Search folders..." type="text" className='w-full p-2 pl-5 pr-5 rounded-full outline-none bg-background'/>
+                <button onClick={() => setSearchInput("")} className='flex p-2 transition duration-200 rounded-full bg-primary hover:bg-secondary active:bg-thirdly'>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style={{fill: "currentColor",transform: '',msFilter:''}}><path d="m16.192 6.344-4.243 4.242-4.242-4.242-1.414 1.414L10.535 12l-4.242 4.242 1.414 1.414 4.242-4.242 4.243 4.242 1.414-1.414L13.364 12l4.242-4.242z"></path></svg>
                 </button>
             </div>
 
@@ -55,8 +73,8 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
             <div className='w-full h-[50rem] overflow-y-scroll overflow-x-hidden flex flex-col gap-4 scrollbar_hidden'>
 
                 {
-                    folders.length > 0 || isNewFolderActive ? 
-                    folders.map((folder) => (
+                    filteredFolders.length > 0 || isNewFolderActive ? 
+                    filteredFolders.map((folder) => (
                         <Folder
                             key={folder.folderId}
                             topic={folder.topic}
@@ -71,7 +89,7 @@ const Sidebar = ({ handleScreenView, handleDeleteFolder,handleDeleteCard, handle
                     ))
                     :
                     <div className='flex items-center justify-center w-full h-full font-semibold text-zinc-500'>
-                        Could not find any folders
+                        {searchInput ? "No matching folders found" : "Could not find any folders"}
                     </div>
                 }
 
