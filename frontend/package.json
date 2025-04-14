@@ -23,6 +23,9 @@
     "@tiptap/pm": "^2.11.7",
     "@tiptap/react": "^2.11.7",
     "@tiptap/starter-kit": "^2.11.7",
+    "html-to-text": "^9.0.5",
+    "idb": "^8.0.2",
+    "idb-keyval": "^6.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

@@ -1,14 +1,94 @@
-import { use, useState } from 'react'
+import { saveFolders, loadFolders } from './db';
+import { useEffect, useState } from 'react'
 import './App.css'
 import Sidebar from '../src/components/Sidebar'
 import ScreenView from './components/ScreenView'
 
 function App() {
 
+  const [folders, setFolders] = useState([ // this will contain all the data for the notes
+
+    //     {
+    //       folderId: 0,
+    //       topic: "Science",
+    //       topicNotes: [
+    //         {
+    //           noteId: 0,
+    //           content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
+    //           date: "12/12/14"
+    //         },
+    //         {
+    //           noteId: 1,
+    //           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
+    //           date: "25/10/18"
+    //         },
+    //         {
+    //           noteId: 2,
+    //           content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
+    //           date: "23/06/10"
+    //         },
+    
+    //       ]
+    //     },
+    //     {
+    //       folderId: 1,
+    //       topic: "History",
+    //       topicNotes: [
+    //         {
+    //           noteId: 0,
+    //           content: "The Great Pyramid of Giza, the largest of the three pyramids in the Giza complex, stands as a testament to ancient Egyptian engineering. Built as a tomb for Pharaoh Khufu, it was originally covered in smooth white limestone and reached a height of 146.6 meters. For over 3,800 years, it remained the tallest man-made structure in the world, showcasing the precision and skill of its builders.",
+    //           date: "12/12/14"
+    //         },
+    //         {
+    //           noteId: 1,
+    //           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
+    //           date: "25/10/18"
+    //         },
+    //         {
+    //           noteId: 2,
+    //           content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
+    //           date: "23/06/10"
+    //         },
+    
+    //       ]
+    //     },
+    //     {
+    //       folderId: 2,
+    //       topic: "Science",
+    //       topicNotes: [
+    //         {
+    //           noteId: 0,
+    //           content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
+    //           date: "12/12/14"
+    //         },
+    //         {
+    //           noteId: 1,
+    //           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
+    //           date: "25/10/18"
+    //         },
+    //         {
+    //           noteId: 2,
+    //           content: `<h2>Science Notes</h2>
+    // <p>Key concepts from today's lecture:</p>
+    // <ul>
+    //   <li><strong>Mitochondria</strong> are the powerhouse of the cell</li>
+    //   <li>Photosynthesis formula: <code>6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂</code></li>
+    // </ul>
+    // <p style="text-align: center">Exam next Tuesday!</p>
+    // <blockquote>
+    //   <p>Remember: Energy cannot be created or destroyed</p>
+    // </blockquote>`,
+    //           date: "23/06/10"
+    //         },
+    
+    //       ]
+    //     },
+    ])
   const [helpClick, setHelpClick] = useState(false)
   const [currentScreenView, setCurrentScreenView] = useState(0) // 0: no note selected, 1: new note 2: selected note
   const [currentFolderId, setCurrentFolderId] = useState(0)
   const [currentNote, setCurrentNote] = useState({})  
+  const [currentEditorContent, setCurrentEditorContent] = useState('');
 
   const getFormattedDate = () => {
     const date = new Date();
@@ -21,35 +101,206 @@ function App() {
     return `${day}/${month}/${year}`; // "22/05/20"
   };
 
-  // changes the current screen e.g 1: empty editor
-  const handleScreenView = (index) => {
-    setCurrentScreenView(index)
-    console.log("screenView: " + currentScreenView)
+  const handleNoteClick = (folderId, noteId, content, date) => {
+      const currentNote = {
+        folderId: folderId,
+        noteId: noteId,
+        content: content,
+        date: date
+      }
+
+      setCurrentNote(currentNote)
+
+      setCurrentScreenView(2)
+      console.log(folders)
   }
+  
 
   const handleHelpClick = () => {
     setHelpClick(!helpClick)
   }
 
-  const handleAddFolder = (topic) => {
+  const getLastNoteId = (folders) => {
+      let lastNoteId = -1; // Default if no notes exist
+      
+      // Loop through all folders and their notes
+      folders.forEach(folder => {
+        folder.topicNotes.forEach(note => {
+          if (note.noteId > lastNoteId) {
+            lastNoteId = note.noteId;
+          }
+        });
+      });
+    
+      return lastNoteId;
+  };
+
+  
+
+  // const handleAddFolder = (topic) => {
+  //   const lastId = folders.length > 0
+  //     ? Math.max(...folders.map(folder => folder.folderId))
+  //     : -1 // if empty, start at -1 so first becomes 0
+  
+  //   const newFolder = {
+  //     folderId: lastId + 1,
+  //     topic: topic,
+  //     topicNotes: []
+  //   }
+  
+  //   setFolders(prev => [...prev, newFolder]) 
+    
+  //   console.log(folders)
+  // }
+
+  // const handleDeleteCard = (folderId, noteId) => {
+  //   setFolders(prevFolders =>
+  //     prevFolders.map(folder => {
+  //       if (folder.folderId === folderId) {
+  //         return {
+  //           ...folder,
+  //           topicNotes: folder.topicNotes.filter(note => note.noteId !== noteId),
+  //         };
+  //       }
+  //       return folder;
+  //     })
+  //   );
+  // };
+  
+
+  // const handleDeleteFolder = (folderId) => {
+  //   setFolders(prevFolders => prevFolders.filter(folder => folder.folderId !== folderId));
+  //   setCurrentScreenView(0)
+  // }
+
+  // const createNewCard = (folderId, content) => {
+  //   const newNoteId = getLastNoteId(folders) + 1;
+  //   const newNote = {
+  //       noteId: newNoteId,
+  //       content: content,
+  //       date: getFormattedDate()
+  //   };
+
+  //   setFolders(prevFolders => 
+  //       prevFolders.map(folder => 
+  //           folder.folderId === folderId
+  //               ? {
+  //                   ...folder,
+  //                   topicNotes: [...folder.topicNotes, newNote]
+  //               }
+  //               : folder
+  //       )
+  //   );
+
+  //   // Set the new note as current and switch to edit mode
+  //   setCurrentNote({
+  //       folderId: folderId,
+  //       noteId: newNoteId,
+  //       content: content,
+  //       date: newNote.date
+  //   });
+  //   setCurrentScreenView(2);
+  // };
+
+    const handleFolderAddClick = (folderId) => { // sends the folder Id to the screenView page
+      setCurrentFolderId(folderId)
+      setCurrentScreenView(1)
+      console.log("screenView 1")
+      console.log("folderId: " + folderId)
+    }
+
+  // const handleUpdateCard = (folderId, noteId, newContent) => {
+  //   setFolders(prevFolders => 
+  //       prevFolders.map(folder => {
+  //           if (folder.folderId === folderId) {
+  //               return {
+  //                   ...folder,
+  //                   topicNotes: folder.topicNotes.map(note => 
+  //                       note.noteId === noteId 
+  //                           ? {...note, content: newContent} 
+  //                           : note
+  //                   )
+  //               };
+  //           }
+  //           return folder;
+  //       })
+  //   );
+  //   // Update current note
+  //   setCurrentNote(prev => ({...prev, content: newContent}));
+  // };
+
+  // Update all your handlers to persist changes:
+// Modified handler that uses the lifted content
+  const handleUpdateCard = async (folderId, noteId) => {
+    const updatedFolders = folders.map(folder => {
+      if (folder.folderId === folderId) {
+        return {
+          ...folder,
+          topicNotes: folder.topicNotes.map(note => 
+            note.noteId === noteId 
+              ? { ...note, content: currentEditorContent }
+              : note
+          )
+        };
+      }
+      return folder;
+    });
+
+    setFolders(updatedFolders);
+    await saveFolders(updatedFolders);
+  };
+
+  const createNewCard = async (folderId, content) => {
+    const newNoteId = getLastNoteId(folders) + 1;
+    const newNote = {
+      noteId: newNoteId,
+      content: content,
+      date: getFormattedDate()
+    };
+
+    setFolders(prevFolders => {
+      const updatedFolders = prevFolders.map(folder => 
+        folder.folderId === folderId
+          ? {
+              ...folder,
+              topicNotes: [...folder.topicNotes, newNote]
+            }
+          : folder
+      );
+      saveFolders(updatedFolders); // Save to IndexedDB
+      return updatedFolders;
+    });
+
+    setCurrentNote({
+      folderId: folderId,
+      noteId: newNoteId,
+      content: content,
+      date: newNote.date
+    });
+    setCurrentScreenView(2);
+  };
+
+  const handleAddFolder = async (topic) => {
     const lastId = folders.length > 0
       ? Math.max(...folders.map(folder => folder.folderId))
-      : -1 // if empty, start at -1 so first becomes 0
-  
+      : -1;
+
     const newFolder = {
       folderId: lastId + 1,
       topic: topic,
       topicNotes: []
-    }
-  
-    setFolders(prev => [...prev, newFolder]) 
-    
-    console.log(folders)
-  }
+    };
 
-  const handleDeleteCard = (folderId, noteId) => {
-    setFolders(prevFolders =>
-      prevFolders.map(folder => {
+    setFolders(prev => {
+      const updatedFolders = [...prev, newFolder];
+      saveFolders(updatedFolders); // Save to IndexedDB
+      return updatedFolders;
+    });
+  };
+
+  const handleDeleteCard = async (folderId, noteId) => {
+    setFolders(prevFolders => {
+      const updatedFolders = prevFolders.map(folder => {
         if (folder.folderId === folderId) {
           return {
             ...folder,
@@ -57,180 +308,41 @@ function App() {
           };
         }
         return folder;
-      })
-    );
-  };
-  
-
-  const handleDeleteFolder = (folderId) => {
-    setFolders(prevFolders => prevFolders.filter(folder => folder.folderId !== folderId));
-    setCurrentScreenView(0)
-  }
-
-  const getLastNoteId = (folders) => {
-    let lastNoteId = -1; // Default if no notes exist
-    
-    // Loop through all folders and their notes
-    folders.forEach(folder => {
-      folder.topicNotes.forEach(note => {
-        if (note.noteId > lastNoteId) {
-          lastNoteId = note.noteId;
-        }
       });
+      saveFolders(updatedFolders); // Save to IndexedDB
+      return updatedFolders;
     });
-  
-    return lastNoteId;
   };
 
-  const createNewCard = (folderId, content) => {
-    const newNoteId = getLastNoteId(folders) + 1;
-    const newNote = {
-        noteId: newNoteId,
-        content: content,
-        date: getFormattedDate()
+  const handleDeleteFolder = async (folderId) => {
+    setFolders(prevFolders => {
+      const updatedFolders = prevFolders.filter(folder => folder.folderId !== folderId);
+      saveFolders(updatedFolders); // Save to IndexedDB
+      return updatedFolders;
+    });
+    setCurrentScreenView(0);
+  };
+
+  // Load on app start
+  useEffect(() => {
+    const loadData = async () => {
+      const savedFolders = await loadFolders();
+      if (savedFolders.length > 0) {
+        setFolders(savedFolders);
+      }
     };
+    loadData();
+  }, []);
 
-    setFolders(prevFolders => 
-        prevFolders.map(folder => 
-            folder.folderId === folderId
-                ? {
-                    ...folder,
-                    topicNotes: [...folder.topicNotes, newNote]
-                }
-                : folder
-        )
-    );
-
-    // Set the new note as current and switch to edit mode
-    setCurrentNote({
-        folderId: folderId,
-        noteId: newNoteId,
-        content: content,
-        date: newNote.date
-    });
-    setCurrentScreenView(2);
-  };
-
-  const handleFolderAddClick = (folderId) => { // sends the folder Id to the screenView page
-    setCurrentFolderId(folderId)
-    setCurrentScreenView(1)
-    console.log("screenView 1")
-    console.log("folderId: " + folderId)
-  }
-
-  const handleUpdateCard = (folderId, noteId, newContent) => {
-    setFolders(prevFolders => 
-        prevFolders.map(folder => {
-            if (folder.folderId === folderId) {
-                return {
-                    ...folder,
-                    topicNotes: folder.topicNotes.map(note => 
-                        note.noteId === noteId 
-                            ? {...note, content: newContent} 
-                            : note
-                    )
-                };
-            }
-            return folder;
-        })
-    );
-    // Update current note
-    setCurrentNote(prev => ({...prev, content: newContent}));
-  };
-
-  const [folders, setFolders] = useState([ // this will contain all the data for the notes
-
-//     {
-//       folderId: 0,
-//       topic: "Science",
-//       topicNotes: [
-//         {
-//           noteId: 0,
-//           content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
-//           date: "12/12/14"
-//         },
-//         {
-//           noteId: 1,
-//           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
-//           date: "25/10/18"
-//         },
-//         {
-//           noteId: 2,
-//           content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
-//           date: "23/06/10"
-//         },
-
-//       ]
-//     },
-//     {
-//       folderId: 1,
-//       topic: "History",
-//       topicNotes: [
-//         {
-//           noteId: 0,
-//           content: "The Great Pyramid of Giza, the largest of the three pyramids in the Giza complex, stands as a testament to ancient Egyptian engineering. Built as a tomb for Pharaoh Khufu, it was originally covered in smooth white limestone and reached a height of 146.6 meters. For over 3,800 years, it remained the tallest man-made structure in the world, showcasing the precision and skill of its builders.",
-//           date: "12/12/14"
-//         },
-//         {
-//           noteId: 1,
-//           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
-//           date: "25/10/18"
-//         },
-//         {
-//           noteId: 2,
-//           content: "Apple Inc. unveiled the iPhone, a revolutionary smartphone combining a touchscreen interface, internet connectivity, and multimedia capabilities. Its launch marked the beginning of the modern smartphone era, transforming communication, entertainment, and business practices globally.",
-//           date: "23/06/10"
-//         },
-
-//       ]
-//     },
-//     {
-//       folderId: 2,
-//       topic: "Science",
-//       topicNotes: [
-//         {
-//           noteId: 0,
-//           content: "King John of England was forced to sign the Magna Carta by rebellious barons at Runnymede, establishing the principle that even monarchs were subject to the law. Though initially a failed peace treaty, it later became a cornerstone of constitutional governance, influencing legal systems worldwide, including the U.S. Constitution.",
-//           date: "12/12/14"
-//         },
-//         {
-//           noteId: 1,
-//           content: "Scottish scientist Alexander Fleming accidentally discovered penicillin when he noticed mold killing bacteria in a petri dish. This breakthrough led to the development of antibiotics, revolutionizing medicine and saving millions of lives by treating previously fatal infections.",
-//           date: "25/10/18"
-//         },
-//         {
-//           noteId: 2,
-//           content: `<h2>Science Notes</h2>
-// <p>Key concepts from today's lecture:</p>
-// <ul>
-//   <li><strong>Mitochondria</strong> are the powerhouse of the cell</li>
-//   <li>Photosynthesis formula: <code>6CO₂ + 6H₂O → C₆H₁₂O₆ + 6O₂</code></li>
-// </ul>
-// <p style="text-align: center">Exam next Tuesday!</p>
-// <blockquote>
-//   <p>Remember: Energy cannot be created or destroyed</p>
-// </blockquote>`,
-//           date: "23/06/10"
-//         },
-
-//       ]
-//     },
-
-  ])
-
-  const handleNoteClick = (folderId, noteId, content, date) => {
-    const currentNote = {
-      folderId: folderId,
-      noteId: noteId,
-      content: content,
-      date: date
-    }
-
-    setCurrentNote(currentNote)
-
-    setCurrentScreenView(2)
-    console.log(folders)
-  }
+  // Auto-save when folders change
+  useEffect(() => {
+    const saveData = async () => {
+      if (folders.length > 0) { // Don't save empty state
+        await saveFolders(folders);
+      }
+    };
+    saveData();
+  }, [folders]);
 
   return (
     <>
@@ -324,6 +436,7 @@ function App() {
         />
 
         <ScreenView
+          onEditorContentChange={setCurrentEditorContent}
           handleUpdateCard={handleUpdateCard}
           getFormattedDate={getFormattedDate}
           currentFolderId={currentFolderId}

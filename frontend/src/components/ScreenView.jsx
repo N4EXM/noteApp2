@@ -10,7 +10,7 @@ import Code from '@tiptap/extension-code';
 import CodeBlock from '@tiptap/extension-code-block'
 import { listItem } from '@tiptap/pm/schema-list';
 
-const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCard,currentNote,  getFormattedDate, handleUpdateCard}) => {
+const ScreenView = ({currentScreenView,onEditorContentChange, helpClick, currentFolderId, createNewCard,currentNote,  getFormattedDate, handleUpdateCard}) => {
 
   const [content, setContent] = useState("")
 
@@ -19,6 +19,7 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
       Underline,
       listItem,
       Code,
+      CodeBlock,
       StarterKit,
       Highlight,
       TextAlign.configure({
@@ -39,6 +40,22 @@ const ScreenView = ({currentScreenView, helpClick, currentFolderId, createNewCar
     ],
     content: content// Start empty for new notes
   });
+
+  // Notify parent when content changes
+  useEffect(() => {
+    if (!editor) return;
+    
+    const handleUpdate = () => {
+      onEditorContentChange(editor.getHTML());
+    };
+    
+    editor.on('update', handleUpdate);
+    return () => {
+      editor.off('update', handleUpdate);
+    };
+  }, [editor, onEditorContentChange]);
+
+  // ... rest of your component
 
   // Update editor content when currentNote changes
   useEffect(() => {
